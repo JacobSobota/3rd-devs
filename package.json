@@ -47,6 +47,7 @@
     "map:dev": "vite --config vite.config.map.ts",
     "camera:dev": "vite --config vite.config.camera.ts",
     "task01": "bun run tasks/01/app.ts",
+    "task02": "bun run tasks/02/app.ts",
     "task03": "bun run tasks/03/app.ts"
   },
   "peerDependencies": {
