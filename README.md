@@ -114,10 +114,12 @@ Wszystkie pliki zapisywane są w folderze `files/context`, a sam katalog można 
 
 Ten przykład wymaga uzupełnienia pliku `.env` o wartości `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` oraz `LANGFUSE_HOST`. Można je uzyskać zakładając bezpłatne konto na [Langfuse](https://langfuse.com/).
 
+UWAGA: Aby uruchomić ten przykład, musisz w panelu Langfuse utworzyć nowy prompt o nazwie `Answer`, którego wartość możesz ustawić na np. 'Odpowiadaj pisząc wyłącznie wielkimi literami'.
+
 - Uruchomienie serwera: `bun langfuse`
 - Interakcja: 
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hey there, what\'s up?"}]}'
   ```
@@ -129,7 +131,7 @@ Po wykonaniu zapytania, zostanie ono automatycznie zalogowane do Langfuse, a wyn
 - Uruchomienie serwera: `bun tiktokenizer`
 - Interakcja:
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hey there, what\'s up?"}], "model": "gpt-4o"}'
   ```
@@ -143,7 +145,7 @@ Przykład ten pokazuje jeden mechanizm pozwalający na kontynuowanie wypowiedzi 
 - Uruchomienie serwera: `bun max_tokens`
 - Interakcja: 
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Write ten sentences about apples and put them in order."}]}'
   ```
@@ -155,7 +157,7 @@ Przykład ten przedstawia mechanizm blokowania zapytań, które nie spełniają 
 - Uruchomienie serwera: `bun constitution`
 - Interakcja:
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
   ```
@@ -170,7 +172,7 @@ Nie jest to przykład nadający się na produkcję, lecz przedstawia ogólne mec
 - Uruchomienie serwera: `bun memory`
 - Interakcja:
  ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
   ```
@@ -184,19 +186,19 @@ Ten przykład zawiera standardową logikę interakcji z modelem, ale wymaga po
 - Uruchomienie serwera: `bun external`
 - Interakcja:
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
   ```
 
 ### Prompts
 
-**UWAGA**: Aby uruchomić ten przykład konieczne jest nawiązanie połączenie z Langfuse poprzez uzupełnienie pliku `.env` o wartości `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` oraz `LANGFUSE_HOST`. Dodatkowo na Twoim koncie musisz utworzyć nowy prompt o nazwie `Answer`, którego wartość możesz ustawić na np. 'Odpowiadaj pisząc wyłącznie wielkimi literami', aby tylko sprawdzić działanie mechanizmu.
+**UWAGA**: Aby uruchomić ten przykład konieczne jest nawiązanie połączenie z Langfuse poprzez uzupełnienie pliku `.env` o wartości `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` oraz `LANGFUSE_HOST`. Dodatkowo na Twoim koncie musisz utworzyć nowy prompt o nazwie `Answer`, którego wartość możesz ustawić na np. 'Odpowiadaj pisząc wyłącznie wielkimi literami', aby tylko sprawdzić działanie mechanizmu. Dodatkowo prompt "Answer" należy dodać w ustawieniu "Chat", a nie "Text" (tryb można zmienić z pomocą zakładek w Langfuse)
 
 - Uruchomienie serwera: `bun prompts`
 - Interakcja:
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
   ```
@@ -208,7 +210,7 @@ Ten przykład nie dotyczy bezpośrednio działania LLM, lecz przedstawia sposób
 - Uruchomienie serwera: `bun database`
 - Interakcja:
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
   ```
@@ -217,10 +219,24 @@ Ten przykład nie dotyczy bezpośrednio działania LLM, lecz przedstawia sposób
 
 Przykład ten przedstawia **absolutnie podstawowe** połączenie z bazą wektorową Qdrant. Jego zadaniem jest zapisywanie historii wiadomości, a następnie wyszukiwanie i wczytywanie do kontekstu rozmowy najbardziej podobnych wiadomości. Przykład ten będziemy rozbudowywać w dalszych lekcjach, łącząc się z Qdrant w bardziej złożonych konfiguracjach.
 
+UWAGA: Aby uruchomić ten przykład, musisz w panelu Langfuse utworzyć nowy prompt o nazwie `Answer`, którego wartość możesz ustawić na np. 'Odpowiadaj pisząc wyłącznie wielkimi literami'. Powodem jest fakt, że w ten przykład został powiązany z przykładem `langfuse`.
+
 - Uruchomienie serwera: `bun qdrant`
 - Interakcja:
   ```bash
-  curl http://localhost:3000/api/chat \
+  curl -X POST http://localhost:3000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
   ```
+
+## S02E01
+
+### Audio
+
+UWAGA: Ten przykład wymaga uruchomienia frontendu w folderze `audio-frontend` oraz backendu w folderze `audio-backend`. W związku z tym przykład **trzeba** uruchomić na własnym komputerze.
+
+- Uruchomienie frontendu: `bun audio:dev`
+- Uruchomienie backendu: `bun audio`
+- Interakcja: Otwórz w przeglądarce stronę http://localhost:5173
+
+WAŻNE: Jakość działania tego przykładu zależy głównie od jakości mikrofonu oraz dźwięków otoczenia. Upewnij się więc, że jakość nagrania jest dobra i że nie ma zakłóceń uniemożliwiających wykrywanie końca wypowiedzi.

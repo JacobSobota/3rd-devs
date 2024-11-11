@@ -1,13 +1,15 @@
 import type { OpenAIService } from "./OpenAIService";
+import { v4 as uuidv4 } from 'uuid';
 import type { ChatCompletion, ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { LangfuseService } from './LangfuseService';
 import { LangfuseTraceClient } from 'langfuse';
+import type { LangfuseService } from "./LangfuseService";
 
 export interface ParsingError {
     error: string;
     result: boolean;
 }
 
+// Update the ShouldLearnResponse interface
 export interface ShouldLearnResponse {
     _thinking: string;
     add?: string[];
@@ -32,20 +34,18 @@ export class AssistantService {
         stream?: boolean,
         jsonMode?: boolean,
         maxTokens?: number,
-        context?: string,
+        memories?: string,
+        knowledge?: string,
+        learnings?: string
       }, trace: LangfuseTraceClient) {
-        const { messages, context,...restConfig } = config;
+        const { messages, ...restConfig } = config;
 
-        const prompt = await this.langfuseService.getPrompt('Answer', 1);
-        const [systemMessage] = prompt.compile({ context });
-        const thread = [systemMessage, ...messages.filter(msg => msg.role !== 'system')];
-
-        const generation = this.langfuseService.createGeneration(trace, "Answer", thread, prompt, {...restConfig });
+        const generation = this.langfuseService.createGeneration(trace, "Answer", { messages, ...restConfig });
 
         try {
             const completion = await this.openaiService.completion({
                 ...restConfig,
-                messages: thread as ChatCompletionMessageParam[]
+                messages
             }) as ChatCompletion;
 
             this.langfuseService.finalizeGeneration(generation, completion.choices[0].message, completion.model, {
@@ -58,6 +58,11 @@ export class AssistantService {
             this.langfuseService.finalizeGeneration(generation, { error: error instanceof Error ? error.message : String(error) }, "unknown");
             throw error;
         }
+    }
+
+    async getRelevantContext(query: string): Promise<string> {
+        const similarMemories = await this.memoryService.searchSimilarMemories(query);
+        return similarMemories.map(memory => memory.content.text).join('\n\n');
     }
 
 }
